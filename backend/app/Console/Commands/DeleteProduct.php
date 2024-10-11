@@ -17,12 +17,12 @@ class DeleteProduct extends Command
         $product = Product::find($id);
 
         if ($product) {
-            // Optionally delete the associated image
+            
             if ($product->image) {
-                File::delete(public_path('storage/' . $product->image)); // Use File to delete the image
+                File::delete(public_path('storage/' . $product->image));
             }
             $product->delete();
-            $this->info('Product deleted: ' . $product->name); // Use info to display the message
+            $this->info('Product deleted: ' . $product->name);
         } else {
             $this->error('Product not found.');
         }

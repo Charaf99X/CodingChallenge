@@ -20,24 +20,19 @@ class CreateProduct extends Command
 
         $imageStoragePath = null;
 
-        // Check if an image path is provided
         if ($imagePath) {
-            // Generate a unique image name
             $imageName = time() . '_' . basename($imagePath);
-            // Define the destination path
             $destinationPath = public_path('storage/images/' . $imageName);
 
-            // Move the uploaded image to the storage
             if (File::exists($imagePath)) {
                 File::move($imagePath, $destinationPath);
-                $imageStoragePath = 'images/' . $imageName; // Store relative path for database
+                $imageStoragePath = 'images/' . $imageName;
             } else {
                 $this->error("Image file does not exist at the given path: $imagePath");
                 return;
             }
         }
 
-        // Create the product in the database
         $product = Product::create([
             'name' => $name,
             'description' => $description,
@@ -45,6 +40,6 @@ class CreateProduct extends Command
             'image' => $imageStoragePath,
         ]);
 
-        $this->info('Product created: ' . $product->name); // Use info to display the message
+        $this->info('Product created: ' . $product->name);
     }
 }
