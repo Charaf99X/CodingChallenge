@@ -14,9 +14,14 @@ class ProductController extends Controller
         $this->productService = $productService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json($this->productService->getAllProducts());
+        $perPage = $request->input('per_page', 10);
+        $sortBy = $request->input('sort_by', 'name');
+        $sortOrder = $request->input('sort_order', 'asc');
+        $categoryId = $request->input('category_id');
+
+        return response()->json($this->productService->getAllProducts($perPage, $sortBy, $sortOrder, $categoryId));
     }
 
     public function store(Request $request)
@@ -25,7 +30,7 @@ class ProductController extends Controller
             'name' => 'required|string',
             'description' => 'required|string',
             'price' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // Validating image types and size
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         $product = $this->productService->createProduct($request->all());

@@ -14,17 +14,15 @@ class ProductService
         $this->productRepo = $productRepo;
     }
 
-    public function getAllProducts()
+    public function getAllProducts($perPage, $sortBy, $sortOrder, $categoryId = null)
     {
-        return $this->productRepo->all();
+        return $this->productRepo->getAllWithPaginationAndSorting($perPage, $sortBy, $sortOrder, $categoryId);
     }
 
     public function createProduct(array $data)
     {
         if (isset($data['image'])) {
-            // Store the image and get the path
             $path = $data['image']->store('images', 'public');
-            // Add the path to the data array
             $data['image'] = $path;
         }
         

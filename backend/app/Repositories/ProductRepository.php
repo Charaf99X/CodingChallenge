@@ -6,9 +6,19 @@ use App\Models\Product;
 
 class ProductRepository
 {
-    public function all()
+    public function getAllWithPaginationAndSorting($perPage, $sortBy, $sortOrder, $categoryId = null)
     {
-        return Product::all();
+        $query = Product::query();
+
+        if ($categoryId) {
+            $query->whereHas('categories', function ($q) use ($categoryId) {
+                $q->where('categories.id', $categoryId);
+            });
+        }
+
+        return $query->orderBy($sortBy, $sortOrder)
+                     ->with('categories')
+                     ->paginate($perPage);
     }
 
     public function create(array $data)
