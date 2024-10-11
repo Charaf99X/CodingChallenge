@@ -1,7 +1,6 @@
 ## Features
 
-- Create and delete categories via CLI
-- Create and delete products via CLI
+- Create and delete products and categories via CLI
 - Browse products through a paginated product listing
 - Sort products by name or price
 - Filter products by category
@@ -75,7 +74,3 @@
   ```
   php artisan product:delete {id}
   ```
-
-## Testing
-
-To run the automated tests for product creation, use the following command in the backend directory:
