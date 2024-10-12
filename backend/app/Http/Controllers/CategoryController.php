@@ -4,22 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Services\CategoryService;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
-    protected $categoryService;
+    protected CategoryService $categoryService;
 
     public function __construct(CategoryService $categoryService)
     {
         $this->categoryService = $categoryService;
     }
 
-    public function index()
+    public function index(): JsonResponse
     {
         return response()->json($this->categoryService->getAllCategories());
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'name' => 'required|string',
@@ -30,7 +31,7 @@ class CategoryController extends Controller
         return response()->json($category, 201);
     }
 
-    public function destroy($id)
+    public function destroy(int $id): JsonResponse
     {
         $this->categoryService->deleteCategory($id);
         return response()->json(null, 204);

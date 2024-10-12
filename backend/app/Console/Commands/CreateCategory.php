@@ -10,7 +10,7 @@ class CreateCategory extends Command
     protected $signature = 'category:create {name} {parent_id?}';
     protected $description = 'Create a new category';
 
-    protected $categoryService;
+    protected CategoryService $categoryService;
 
     public function __construct(CategoryService $categoryService)
     {
@@ -18,7 +18,7 @@ class CreateCategory extends Command
         $this->categoryService = $categoryService;
     }
 
-    public function handle()
+    public function handle(): int
     {
         $name = $this->argument('name');
         $parentId = $this->argument('parent_id');
@@ -31,5 +31,6 @@ class CreateCategory extends Command
         $category = $this->categoryService->createCategory($data);
 
         $this->info("Category '{$category->name}' created successfully.");
+        return 0;
     }
 }

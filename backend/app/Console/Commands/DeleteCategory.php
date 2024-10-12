@@ -10,7 +10,7 @@ class DeleteCategory extends Command
     protected $signature = 'category:delete {id}';
     protected $description = 'Delete a category';
 
-    protected $categoryService;
+    protected CategoryService $categoryService;
 
     public function __construct(CategoryService $categoryService)
     {
@@ -18,7 +18,7 @@ class DeleteCategory extends Command
         $this->categoryService = $categoryService;
     }
 
-    public function handle()
+    public function handle(): int
     {
         $id = $this->argument('id');
 
@@ -26,8 +26,10 @@ class DeleteCategory extends Command
 
         if ($result) {
             $this->info("Category with ID {$id} deleted successfully.");
+            return 0;
         } else {
             $this->error("Failed to delete category with ID {$id}.");
+            return 1;
         }
     }
 }

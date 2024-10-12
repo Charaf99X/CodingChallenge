@@ -4,17 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Services\ProductService;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
-    protected $productService;
+    protected ProductService $productService;
 
     public function __construct(ProductService $productService)
     {
         $this->productService = $productService;
     }
 
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $perPage = $request->input('per_page', 10);
         $sortBy = $request->input('sort_by', 'name');
@@ -24,7 +25,7 @@ class ProductController extends Controller
         return response()->json($this->productService->getAllProducts($perPage, $sortBy, $sortOrder, $categoryId));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'name' => 'required|string',

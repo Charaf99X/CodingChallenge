@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Support\Facades\File;
 
 class CreateProduct extends Command
@@ -11,35 +11,37 @@ class CreateProduct extends Command
     protected $signature = 'product:create {name} {description} {price} {image?}';
     protected $description = 'Create a new product';
 
-    public function handle()
+    protected ProductService $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        parent::__construct();
+        $this->productService = $productService;
+    }
+
+    public function handle(): int
     {
         $name = $this->argument('name');
         $description = $this->argument('description');
         $price = $this->argument('price');
         $imagePath = $this->argument('image');
 
-        $imageStoragePath = null;
-
-        if ($imagePath) {
-            $imageName = time() . '_' . basename($imagePath);
-            $destinationPath = public_path('storage/images/' . $imageName);
-
-            if (File::exists($imagePath)) {
-                File::move($imagePath, $destinationPath);
-                $imageStoragePath = 'images/' . $imageName;
-            } else {
-                $this->error("Image file does not exist at the given path: $imagePath");
-                return;
-            }
-        }
-
-        $product = Product::create([
+        $data = [
             'name' => $name,
             'description' => $description,
             'price' => $price,
-            'image' => $imageStoragePath,
-        ]);
+        ];
+
+        if ($imagePath && file_exists($imagePath)) {
+            $data['image'] = new \Illuminate\Http\UploadedFile($imagePath, basename($imagePath));
+        } else if ($imagePath) {
+            $this->error("Image file does not exist at the given path: $imagePath");
+            return 1;
+        }
+
+        $product = $this->productService->createProduct($data);
 
         $this->info('Product created: ' . $product->name);
+        return 0;
     }
 }

@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import ProductForm from './components/ProductForm';
 import ProductList from './components/ProductList';
 import Pagination from './components/Pagination';
 import CategoryFilter from './components/CategoryFilter';
+import DynamicRoutes from './components/DynamicRoutes';
 
 const App = () => {
     const [products, setProducts] = useState([]);
@@ -12,11 +14,7 @@ const App = () => {
     const [sortOrder, setSortOrder] = useState('asc');
     const [selectedCategory, setSelectedCategory] = useState(null);
 
-    useEffect(() => {
-        fetchProducts();
-    }, [currentPage, sortBy, sortOrder, selectedCategory]);
-
-    const fetchProducts = () => {
+    const fetchProducts = useCallback(() => {
         const url = `http://localhost:8000/api/products?page=${currentPage}&sort_by=${sortBy}&sort_order=${sortOrder}${selectedCategory ? `&category_id=${selectedCategory}` : ''}`;
         fetch(url)
             .then(response => response.json())
@@ -24,7 +22,11 @@ const App = () => {
                 setProducts(data.data);
                 setTotalPages(data.last_page);
             });
-    };
+    }, [currentPage, sortBy, sortOrder, selectedCategory]);
+
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
 
     const addProduct = (productData) => {
         fetch('http://localhost:8000/api/products', {
@@ -52,23 +54,26 @@ const App = () => {
     };
 
     return (
-        <div>
-            <h1>Product Management</h1>
-            <ProductForm onAddProduct={addProduct} />
-            <CategoryFilter onSelectCategory={setSelectedCategory} />
-            <ProductList 
-                products={products} 
-                onDeleteProduct={handleDelete} 
-                onSort={handleSort}
-                sortBy={sortBy}
-                sortOrder={sortOrder}
-            />
-            <Pagination 
-                currentPage={currentPage} 
-                totalPages={totalPages} 
-                onPageChange={setCurrentPage} 
-            />
-        </div>
+        <Router>
+            <div>
+                <h1>Product Management</h1>
+                <ProductForm onAddProduct={addProduct} />
+                <CategoryFilter onSelectCategory={setSelectedCategory} />
+                <ProductList 
+                    products={products} 
+                    onDeleteProduct={handleDelete} 
+                    onSort={handleSort}
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
+                />
+                <Pagination 
+                    currentPage={currentPage} 
+                    totalPages={totalPages} 
+                    onPageChange={setCurrentPage} 
+                />
+                <DynamicRoutes />
+            </div>
+        </Router>
     );
 };
 

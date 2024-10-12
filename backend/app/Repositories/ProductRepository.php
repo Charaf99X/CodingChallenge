@@ -3,10 +3,11 @@
 namespace App\Repositories;
 
 use App\Models\Product;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductRepository
 {
-    public function getAllWithPaginationAndSorting($perPage, $sortBy, $sortOrder, $categoryId = null)
+    public function getAllWithPaginationAndSorting(int $perPage, string $sortBy, string $sortOrder, ?int $categoryId = null): LengthAwarePaginator
     {
         $query = Product::query();
 
@@ -21,13 +22,13 @@ class ProductRepository
                      ->paginate($perPage);
     }
 
-    public function create(array $data)
+    public function create(array $data): Product
     {
         return Product::create($data);
     }
 
-    public function delete($id)
+    public function delete(int $id): bool
     {
-        return Product::destroy($id);
+        return Product::destroy($id) > 0;
     }
 }
